@@ -1,0 +1,5 @@
+{
+  "prettier.prettierPath": "frontend/node_modules/prettier",
+  "[json]": { "editor.defaultFormatter": "vscode.json-language-features" },
+  "[jsonc]": { "editor.defaultFormatter": "vscode.json-language-features" }
+}
