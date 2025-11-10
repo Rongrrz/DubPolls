@@ -1,8 +1,8 @@
 package com.dubpolls.backend.controller;
 
-import com.dubpolls.backend.dto.CreatePollRequest;
-import com.dubpolls.backend.dto.PollOptionView;
-import com.dubpolls.backend.dto.PollView;
+import com.dubpolls.backend.dto.poll.CreatePollRequest;
+import com.dubpolls.backend.dto.poll.PollOptionView;
+import com.dubpolls.backend.dto.poll.PollView;
 import com.dubpolls.backend.model.Poll;
 import com.dubpolls.backend.service.PollService;
 import jakarta.validation.Valid;

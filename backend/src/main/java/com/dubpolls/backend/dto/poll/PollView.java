@@ -1,4 +1,4 @@
-package com.dubpolls.backend.dto;
+package com.dubpolls.backend.dto.poll;
 
 import java.time.Instant;
 import java.util.List;

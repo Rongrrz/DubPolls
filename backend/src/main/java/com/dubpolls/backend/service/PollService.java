@@ -16,7 +16,7 @@ public class PollService {
     public Poll newPoll(String question, List<String> options, Instant closesAt) {
         var pollId = idCounter.incrementAndGet();
         var pollOptions = options.stream().map(PollOption::new).toList();
-        var poll = new Poll(pollId, question, closesAt, Instant.now(), pollOptions);
+        var poll = Poll.newPoll(pollId, question, closesAt, pollOptions);
         polls.put(pollId, poll);
         return poll;
     }
