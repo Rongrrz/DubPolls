@@ -1,4 +1,4 @@
-package com.seattlehourly.backend.model;
+package com.seattlehourly.backend.archived.model;
 
 import java.time.Instant;
 import java.util.List;

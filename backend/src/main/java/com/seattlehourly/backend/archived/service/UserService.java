@@ -1,6 +1,6 @@
-package com.seattlehourly.backend.service;
+package com.seattlehourly.backend.archived.service;
 
-import com.seattlehourly.backend.model.User;
+import com.seattlehourly.backend.archived.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

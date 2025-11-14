@@ -10,7 +10,7 @@ export function LocalNews() {
       <ul className="space-y-2">
         {posts.map(post => {
           return (
-            <li>
+            <li key={post.title}>
               <a className="font-medium hover:underline" href={post.url} target="_blank" rel="noreferrer">
                 {post.title}
               </a>

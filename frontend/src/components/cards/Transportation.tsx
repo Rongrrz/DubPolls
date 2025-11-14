@@ -11,7 +11,7 @@ export function Transportation() {
       <ul className="space-y-2">
         {posts.map(post => {
           return (
-            <li className="flex items-start justify-between">
+            <li key={post.title} className="flex items-start justify-between">
               <div>
                 <div className="font-medium">{post.title}</div>
                 <div className="text-xs text-neutral-500">

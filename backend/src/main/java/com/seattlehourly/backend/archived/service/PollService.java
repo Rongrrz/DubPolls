@@ -1,7 +1,7 @@
-package com.seattlehourly.backend.service;
+package com.seattlehourly.backend.archived.service;
 
-import com.seattlehourly.backend.model.Poll;
-import com.seattlehourly.backend.model.PollOption;
+import com.seattlehourly.backend.archived.model.Poll;
+import com.seattlehourly.backend.archived.model.PollOption;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

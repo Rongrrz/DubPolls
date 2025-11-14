@@ -1,4 +1,4 @@
-package com.seattlehourly.backend.dto.poll;
+package com.seattlehourly.backend.archived.dto.poll;
 
 import java.time.Instant;
 import java.util.List;

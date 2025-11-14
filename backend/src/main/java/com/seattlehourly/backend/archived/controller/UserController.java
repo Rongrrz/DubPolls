@@ -1,9 +1,9 @@
-package com.seattlehourly.backend.controller;
+package com.seattlehourly.backend.archived.controller;
 
-import com.seattlehourly.backend.dto.user.CreateUserRequest;
-import com.seattlehourly.backend.dto.user.UserView;
-import com.seattlehourly.backend.model.User;
-import com.seattlehourly.backend.service.UserService;
+import com.seattlehourly.backend.archived.dto.user.CreateUserRequest;
+import com.seattlehourly.backend.archived.dto.user.UserView;
+import com.seattlehourly.backend.archived.model.User;
+import com.seattlehourly.backend.archived.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 

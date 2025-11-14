@@ -1,4 +1,4 @@
-package com.seattlehourly.backend.dto.user;
+package com.seattlehourly.backend.archived.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

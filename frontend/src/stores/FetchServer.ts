@@ -27,16 +27,16 @@ export async function FetchServer(): Promise<void> {
   try {
     console.log('[FetchServer] Fetching data…');
 
-    const res = await fetch('/api/fetch');
-    console.log(res);
+    const res = await fetch('http://localhost:8080/api/fetch');
     const data = await res.json();
+    // console.log(data);
 
     // Update all our atoms...
-    store.set(redditPostsAtom, data.reddit);
-    store.set(weatherAtom, data.weather);
-    store.set(newsPostAtom, data.news);
-    store.set(transportAtom, data.transport);
-    store.set(summaryAtom, data.summary);
+    store.set(redditPostsAtom, data.redditPosts);
+    // store.set(weatherAtom, data.weather);
+    // store.set(newsPostAtom, data.news);
+    // store.set(transportAtom, data.transport);
+    // store.set(summaryAtom, data.summary);
 
     // Save time to lastFetched if successful fetch.
     store.set(lastFetchedAtom, Date.now());
