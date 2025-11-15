@@ -6,3 +6,5 @@ I also thought that this project would be a very good demonstration of the usefu
 - 🤖 Basic frontend & backend functionalities
 - 🙉 AI Summary
 - 🔢 Integration with database (thinking postgreSQL) to cache a few days back, for even more "Overseering"
+- 🎵 Discord Bot(?)
+- 🍎 Mobile App
