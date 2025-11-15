@@ -15,4 +15,9 @@ public class HttpClientConfig {
                 .defaultHeader("User-Agent", "SeattleHourlyBot/0.1 (by u/Nearby_Eye4135)")
                 .build();
     }
+
+    @Bean
+    public RestTemplate emptyRestTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
 }

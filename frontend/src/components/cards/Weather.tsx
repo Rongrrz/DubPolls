@@ -10,7 +10,7 @@ export function Weather() {
       <div className="flex items-end gap-4">
         <div>
           <div className="text-4xl font-black">{weather.temperature}°F</div>
-          <div className="text-neutral-400">{weather.wind}mph</div>
+          <div className="text-neutral-400">{weather.windMPH}mph</div>
         </div>
       </div>
       <hr className="my-3 border-neutral-800" />

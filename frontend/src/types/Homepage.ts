@@ -20,7 +20,7 @@ export type TransportationStatus = {
 
 export type WeatherSummary = {
   temperature: number;
-  wind: number;
+  windMPH: number;
   rainChance: number;
 };
 

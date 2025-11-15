@@ -2,8 +2,10 @@ package com.seattlehourly.backend.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seattlehourly.backend.config.Constants;
 import com.seattlehourly.backend.dto.fetch.RedditPost;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,23 +18,22 @@ import java.util.List;
 @Service
 public class RedditService {
     private static final String SUBREDDIT_URL = "https://www.reddit.com/r/%s/new/.json?limit=%d";
-    private static final List<String> SUBREDDITS =
-            List.of("udub", "Seattle", "SeattleWA", "Seahawks", "Mariners");
 
-    private final RestTemplate rest;
+    private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
     private List<RedditPost> cachedPosts = List.of();
 
-
-    public RedditService(RestTemplate redditRestTemplate, ObjectMapper mapper) {
-        this.rest = redditRestTemplate;
+    public RedditService(
+            @Qualifier("redditRestTemplate") RestTemplate restTemplate,
+            ObjectMapper mapper) {
+        this.restTemplate = restTemplate;
         this.mapper = mapper;
     }
 
     // Called once on startup to warm the cache
     @PostConstruct
-    public void initCache() {
-        fetchAllSeattleClusterPosts();
+    public void initialize() {
+        updateSeattleClusterPosts();
     }
 
     public List<RedditPost> getPosts() {
@@ -40,9 +41,9 @@ public class RedditService {
     }
 
     @Scheduled(fixedRate = 300_000) // 5 minutes per
-    public void fetchAllSeattleClusterPosts() {
+    public void updateSeattleClusterPosts() {
         List<RedditPost> combined = new ArrayList<>();
-        for (String subreddit : SUBREDDITS) {
+        for (String subreddit : Constants.SUBREDDITS) {
             combined.addAll(fetchSubredditPosts(subreddit, 5));
         }
 
@@ -57,37 +58,31 @@ public class RedditService {
         String url = SUBREDDIT_URL.formatted(subreddit, limit);
 
         try {
-            String json = rest.getForObject(url, String.class);
+            String json = restTemplate.getForObject(url, String.class);
             if (json == null) return List.of();
 
             JsonNode root = mapper.readTree(json);
             JsonNode children = root.path("data").path("children");
-
             List<RedditPost> posts = new ArrayList<>();
+            for (JsonNode child : children) {
+                JsonNode data = child.path("data");
 
-            if (children.isArray()) {
-                for (JsonNode child : children) {
-                    JsonNode data = child.path("data");
+                String title = data.path("title").asText("");
+                String permalink = data.path("permalink").asText("");
+                int comments = data.path("num_comments").asInt(0);
+                long createdUtc = data.path("created_utc").asLong(0);
 
-                    String title = data.path("title").asText("");
-                    String permalink = data.path("permalink").asText("");
-                    int comments = data.path("num_comments").asInt(0);
-                    long createdUtc = data.path("created_utc").asLong(0);
-
-                    if (title.isBlank() || permalink.isBlank()) continue;
-
-                    var newPost = new RedditPost(
-                            title,
-                            subreddit,
-                            formatTimeAgo(createdUtc),
-                            createdUtc,
-                            comments,
-                            "https://www.reddit.com" + permalink
-                    );
-                    posts.add(newPost);
-                }
+                if (title.isBlank() || permalink.isBlank()) continue;
+                var newPost = new RedditPost(
+                        title,
+                        subreddit,
+                        formatTimeAgo(createdUtc),
+                        createdUtc,
+                        comments,
+                        "https://www.reddit.com" + permalink
+                );
+                posts.add(newPost);
             }
-
             return posts;
         } catch (Exception e) {
             System.err.println("Reddit fetch failed for r/" + subreddit + ": " + e.getMessage());

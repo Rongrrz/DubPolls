@@ -33,7 +33,7 @@ export async function FetchServer(): Promise<void> {
 
     // Update all our atoms...
     store.set(redditPostsAtom, data.redditPosts);
-    // store.set(weatherAtom, data.weather);
+    store.set(weatherAtom, data.weather);
     // store.set(newsPostAtom, data.news);
     // store.set(transportAtom, data.transport);
     // store.set(summaryAtom, data.summary);
