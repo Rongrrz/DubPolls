@@ -10,10 +10,8 @@ import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,7 +23,6 @@ public class NewsService {
     private static final String FEED_URL = "https://www.king5.com/feeds/googlenews";
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final DateTimeFormatter RFC_1123 = DateTimeFormatter.RFC_1123_DATE_TIME;
 
     private List<NewsArticle> cachedArticles = List.of();
 
@@ -51,8 +48,6 @@ public class NewsService {
     }
 
     private List<NewsArticle> parseRss(String xml) throws Exception {
-        List<NewsArticle> articles = new ArrayList<>();
-
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -61,55 +56,45 @@ public class NewsService {
                 .parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 
         NodeList urlNodes = doc.getElementsByTagName("url");
+        List<NewsArticle> articles = new ArrayList<>(Math.min(urlNodes.getLength(), 3));
 
         for (int i = 0; i < urlNodes.getLength(); i++) {
             Element urlEl = (Element) urlNodes.item(i);
             String link = getText(urlEl, "loc");
-
             NodeList newsNodes = urlEl.getElementsByTagName("news:news");
-            if (newsNodes.getLength() == 0) continue;
-            Element newsEl = (Element) newsNodes.item(0);
+            if (link == null || newsNodes.getLength() == 0) continue;
 
+            Element newsEl = (Element) newsNodes.item(0);
             String title = getText(newsEl, "news:title");
             String pubDateStr = getText(newsEl, "news:publication_date");
-
-            if (link == null || title == null) {
-                continue; // skip incomplete entries
-            }
+            if (title == null) continue;
 
             long createdUtc;
-            if (pubDateStr != null && !pubDateStr.isEmpty()) {
-                try {
-                    var date = java.time.LocalDate.parse(pubDateStr);
-                    var zdt = date.atStartOfDay(java.time.ZoneOffset.UTC);
-                    createdUtc = zdt.toInstant().toEpochMilli();
-                } catch (Exception e) {
-                    createdUtc = System.currentTimeMillis();
-                }
-            } else {
+            try {
+                var date = java.time.LocalDate.parse(pubDateStr);
+                createdUtc = date.atStartOfDay(java.time.ZoneOffset.UTC)
+                        .toInstant()
+                        .toEpochMilli();
+            } catch (Exception e) {
                 createdUtc = System.currentTimeMillis();
             }
 
-            NewsArticle article = new NewsArticle(
+            articles.add(new NewsArticle(
                     title,
                     link,
                     "King 5",
                     formatTimeAgo(createdUtc),
                     createdUtc
-            );
-
-            articles.add(article);
+            ));
         }
 
-        // sort newest → oldest
         articles.sort(Comparator.comparingLong(NewsArticle::createdUtc).reversed());
         if (articles.size() > 3) {
-            articles = new ArrayList<>(articles.subList(0, 3));
+            articles = articles.subList(0, 3);
         }
-        
-        return Collections.unmodifiableList(articles);
-    }
 
+        return List.copyOf(articles);
+    }
 
     private String getText(Element parent, String tagName) {
         NodeList list = parent.getElementsByTagName(tagName);
