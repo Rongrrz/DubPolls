@@ -6,6 +6,7 @@ import com.seattlehourly.backend.config.Constants;
 import com.seattlehourly.backend.dto.fetch.WeatherSummary;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,6 +32,7 @@ public class WeatherService {
         updateSummary();
     }
 
+    @Scheduled(fixedRate = 300_000)
     public void updateSummary() {
         String url =
                 "https://api.open-meteo.com/v1/forecast"
